@@ -20,7 +20,7 @@ module ConvertApi
       @upload_timeout = 1800
       @download_timeout = 1800
       @is_proxy = false
-      @proxy_host = 127.0.0.1
+      @proxy_host = '127.0.0.1'
       @proxy_host = 7890
     end
   end
