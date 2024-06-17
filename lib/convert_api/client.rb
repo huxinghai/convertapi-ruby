@@ -30,6 +30,7 @@ module ConvertApi
 
     def get(path, params = {}, options = {})
       handle_response do
+
         request = Net::HTTP::Get.new(request_uri(path, params), DEFAULT_HEADERS)
 
         http(options).request(request)
@@ -92,7 +93,12 @@ module ConvertApi
     end
 
     def http(options = {})
-      http = Net::HTTP.new(base_uri.host, base_uri.port)
+      http = if config.is_proxy
+              Net::HTTP::Proxy(config.proxy_host, config.proxy_port).start(base_uri.host, base_uri.port, use_ssl: base_uri.scheme == 'https')
+            else
+              Net::HTTP.new(base_uri.host, base_uri.port)
+            end
+      
       http.open_timeout = config.connect_timeout
       http.read_timeout = options.fetch(:read_timeout, config.read_timeout)
       http.use_ssl = base_uri.scheme == 'https'
