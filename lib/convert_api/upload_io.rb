@@ -30,7 +30,12 @@ module ConvertApi
     end
 
     def upload_file
-      ConvertApi.client.upload(@io, @filename)
+      tmp = nil
+      time = Benchmark.measure do
+        tmp = ConvertApi.client.upload(@io, @filename)
+      end
+      warn("ConvertApi.upload_file 执行耗时: #{time.real.round(2)} 秒")
+      tmp
     end
 
     def io_filename

@@ -41,8 +41,12 @@ module ConvertApi
       handle_response do
         request = Net::HTTP::Post.new(request_uri(path), DEFAULT_HEADERS)
         request.form_data = build_form_data(params)
-
-        http(options).request(request)
+        rr = nil
+        time = Benchmark.measure do
+          rr = http(options).request(request)
+        end
+        warn("ConvertApi.request 执行耗时: #{time.real.round(2)} 秒, #{path}")
+        rr
       end
     end
 
