@@ -2,6 +2,7 @@ require 'net/https'
 require 'uri'
 require 'cgi'
 require 'json'
+require 'io/console'
 
 module ConvertApi
   class Client
@@ -68,6 +69,18 @@ module ConvertApi
       end
     end
 
+    def download(url, path)
+      request = Net::HTTP::Get.new(url)
+
+      http(read_timeout: config.download_timeout).request(request) do |response|
+        open(path, 'wb') do |file|
+          response.read_body do |chunk|
+            file.write(chunk)
+          end
+        end
+      end
+    end
+
     private
 
     def handle_response
@@ -98,6 +111,7 @@ module ConvertApi
 
     def http(options = {})
       http = if config.is_proxy
+              warn("http proxy #{config.proxy_host}, #{config.proxy_port}")
               Net::HTTP::Proxy(config.proxy_host, config.proxy_port).start(base_uri.host, base_uri.port, use_ssl: base_uri.scheme == 'https')
             else
               Net::HTTP.new(base_uri.host, base_uri.port)

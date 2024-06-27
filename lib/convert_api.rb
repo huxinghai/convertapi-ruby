@@ -8,6 +8,7 @@ require 'convert_api/result_file'
 require 'convert_api/upload_io'
 require 'convert_api/file_param'
 require 'convert_api/format_detector'
+require 'benchmark'
 
 module ConvertApi
   URI_REGEXP = URI::regexp(%w(http https))

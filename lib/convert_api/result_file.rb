@@ -27,8 +27,11 @@ module ConvertApi
     def save(path)
       time = Benchmark.measure do
         path = File.join(path, filename) if File.directory?(path)
-
-        IO.copy_stream(io, path, size)
+        if config.is_proxy
+          ConvertApi.client.download(URI.parse(url), path)
+        else
+          IO.copy_stream(io, path, size)  
+        end
       end
       warn("ConvertApi.download_file 执行耗时: #{time.real.round(2)} 秒, #{path}, #{url}")
 
